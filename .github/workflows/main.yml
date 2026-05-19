@@ -1,0 +1,47 @@
+name: Kenya Real Estate Pipeline
+
+on:
+  schedule:
+    - cron: '0 2 * * 2'  # 매주 화요일 케냐 시간 05:00 (한국 시간 11:00)
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install Dependencies
+        run: |
+          pip install -r requirements.txt
+          
+      - name: 1. 데이터 수집 (Scraping)
+        run: python scraper.py
+        
+      - name: 2. 거시경제 데이터 병합
+        run: python "Kenya 거시경제.py"
+        
+      - name: 3. 머신러닝 분석 (XGBoost)
+        run: python ml_predict.py
+        
+      - name: 4. AI 리포트 작성 및 메일 발송
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          MY_EMAIL: ${{ secrets.MY_EMAIL }}
+          MY_PASSWORD: ${{ secrets.MY_PASSWORD }}
+          RECEIVER_EMAIL: ${{ secrets.RECEIVER_EMAIL }}
+        run: python send_report.py
+
+      - name: 5. 추출된 데이터 영구 보존 (Commit)
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add .
+          git diff --quiet && git diff --staged --quiet || git commit -m "Auto-update Real Estate data and report"
+          git push
