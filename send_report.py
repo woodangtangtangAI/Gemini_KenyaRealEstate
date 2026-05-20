@@ -40,6 +40,9 @@ def generate_and_send_report():
     df = pd.read_csv(latest_file)
     latest_macro = df.iloc[-1]
     
+    usd_rate = latest_macro.get('USD_KES_Rate', '데이터 없음') if 'USD_KES_Rate' in latest_macro.index else '데이터 없음'
+    cbr_rate = latest_macro.get('CBR_Rate', '데이터 없음') if 'CBR_Rate' in latest_macro.index else '데이터 없음'
+    
     # [추가] 머신러닝 상위 변수 가져오기
     top_features_path = os.path.join(base_path, "top_features.txt")
     top_features_data = "추출된 변수 데이터 없음"
@@ -56,8 +59,8 @@ def generate_and_send_report():
     - 분석 대상 매물 수: {len(df):,}건
     - 시장 평균 호가: {df['Price_KES'].mean():,.0f} KES
     - 시장 최고가: {df['Price_KES'].max():,.0f} KES / 최저가: {df['Price_KES'].min():,.0f} KES
-    - 현재 환율: {latest_macro['USD_KES_Rate']} KES/USD
-    - 현재 기준금리: {latest_macro['CBR_Rate']}%
+    - 현재 환율: {usd_rate}
+    - 현재 기준금리: {cbr_rate}
     - 집값 영향 핵심 변수 (XGBoost 분석 상위 5개): {top_features_data}
 
     [객관적 분석 지시사항]
@@ -123,7 +126,7 @@ def generate_and_send_report():
         doc.add_heading('시장 주요 지표 요약', level=1)
         p1 = doc.add_paragraph()
         p1.add_run(f"분석 대상 매물 수: {len(df):,}건\n").bold = True
-        p1.add_run(f"환율: {latest_macro['USD_KES_Rate']} KES/USD | 금리: {latest_macro['CBR_Rate']}%\n")
+        p1.add_run(f"환율: {usd_rate} | 금리: {cbr_rate}\n")
         
         # AI 분석 추가
         doc.add_heading('AI 퀀트 애널리스트 Insight', level=1)
@@ -152,7 +155,7 @@ def generate_and_send_report():
         <h2 style="color: #004a99; border-bottom: 2px solid #004a99; padding-bottom: 5px;">📊 나이로비 부동산 시장 AI 브리핑</h2>
         <p><strong>발행일시:</strong> {current_time}</p>
         <div style="background: #f9f9f9; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
-            <p style="margin: 0;"><strong>데이터 기준 환율:</strong> {latest_macro['USD_KES_Rate']} KES/USD | <strong>금리:</strong> {latest_macro['CBR_Rate']}%</p>
+            <p style="margin: 0;"><strong>데이터 기준 환율:</strong> {usd_rate} | <strong>금리:</strong> {cbr_rate}</p>
         </div>
         <h3 style="margin-bottom: 10px;">🧠 퀀트 애널리스트 Insight</h3>
         <div style="white-space: pre-wrap; background: #ffffff; border-left: 4px solid #004a99; padding: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">{ai_insight}</div>
