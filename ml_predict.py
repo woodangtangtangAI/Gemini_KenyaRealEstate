@@ -44,7 +44,7 @@ def train_real_estate_model():
     df = df.fillna(0)
 
     # 3. 특성(X)과 타겟(y) 분리
-    drop_cols = ['Price_KES', 'Scraped_Date']
+    drop_cols = ['Price_KES', 'Scraped_Date', 'Property_ID']
     X = df.drop(columns=[col for col in drop_cols if col in df.columns])
     y = df['Price_KES']
 
