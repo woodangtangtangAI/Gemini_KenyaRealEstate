@@ -100,14 +100,18 @@ def generate_and_send_report():
     }
     
     try:
-        response = requests.post(url, headers=headers, json=data)
+        response = requests.post(url, headers=headers, json=data, timeout=120)
         response.raise_for_status()
         result = response.json()
         ai_insight = result['candidates'][0]['content']['parts'][0]['text']
         print("✅ 숫자 기반의 AI 분석을 성공적으로 받아왔습니다!")
     except Exception as e:
-        ai_insight = f"AI 직접 통신 실패: {e}\n(응답 코드: {response.text if 'response' in locals() else '없음'})"
-        print("❌ AI 분석 실패")
+        resp_text = ''
+        if 'response' in locals():
+            resp_text = response.text[:500]
+        print(f"❌ AI 분석 실패: {e}")
+        print(f"   상세 응답: {resp_text}")
+        ai_insight = f"[AI 자동 분석 일시 장애] 다음 주에 자동 복구됩니다.\n오류 내용: {e}"
 
     # 5.5 Word 파일 생성 및 저장
     current_date = datetime.now().strftime('%Y%m%d')
@@ -197,7 +201,10 @@ def generate_and_send_report():
     except Exception as e:
         print(f"❌ [실패] 메일 서버 에러: {e}")
         
-    input("\n엔터 키를 누르면 창이 닫힙니다...")
+    try:
+        input("\n엔터 키를 누르면 창이 닫힙니다...")
+    except EOFError:
+        pass  # 클라우드(GitHub Actions) 환경에서는 키보드 입력이 없으므로 무시
 
 if __name__ == "__main__":
     generate_and_send_report()
