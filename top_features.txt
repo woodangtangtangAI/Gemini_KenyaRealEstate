@@ -1,0 +1,1 @@
+Bedrooms (0.802), Bathrooms (0.084), Location (0.066), Size_sqm (0.048)
