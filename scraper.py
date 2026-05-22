@@ -58,7 +58,17 @@ def get_nairobi_data_pagination(max_pages=265):
                     elif 'Bed' in p: bed = re.sub(r'[^0-9]', '', p)
                     elif 'Bath' in p: bath = re.sub(r'[^0-9]', '', p)
                     elif 'm²' in p or 'sqm' in p: size = re.sub(r'[^0-9.]', '', p)
-                    elif any(area in p for area in ['Westlands', 'Riverside', 'Kilimani', 'Lavington', 'Kileleshwa']):
+                    elif any(area in p for area in [
+                        'Westlands', 'Riverside', 'Kilimani', 'Lavington', 'Kileleshwa',
+                        'Karen', 'Runda', 'Muthaiga', 'Spring Valley', 'Loresho',
+                        'Langata', 'South B', 'South C', 'Nairobi West', 'Upper Hill',
+                        'Upperhill', 'Embakasi', 'Kasarani', 'Roysambu', 'Ruaka',
+                        'Parklands', 'Ngara', 'Eastleigh', 'Donholm', 'Umoja',
+                        'Kahawa', 'Syokimau', 'Athi River', 'Kitengela', 'Ongata Rongai',
+                        'Gigiri', 'Garden Estate', 'Thika Road', 'Hurlingham',
+                        'Ngong Road', 'Dagoretti', 'Zimmerman', 'Mihango',
+                        'Ruiru', 'Juja', 'Kikuyu', 'Mlolongo', 'Pipeline'
+                    ]):
                         loc = p
 
                 if price != "NaN":
