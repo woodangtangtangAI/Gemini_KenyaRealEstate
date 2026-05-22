@@ -1,8 +1,15 @@
 import os
 import pandas as pd
 from datetime import datetime
+import fetch_macro
 
-print("🚀 [2단계] 데이터 병합 및 마스터 파일 생성 프로세스를 시작합니다...")
+print("🚀 [1.5단계] 거시경제 데이터 실시간 수집을 먼저 진행합니다...")
+try:
+    fetch_macro.fetch_and_accumulate_macro()
+except Exception as e:
+    print(f"⚠️ 거시경제 데이터 수집 실패: {e}")
+
+print("\n🚀 [2단계] 데이터 병합 및 마스터 파일 생성 프로세스를 시작합니다...")
 
 base_path = os.path.dirname(os.path.abspath(__file__))
 
