@@ -16,13 +16,16 @@ except Exception as e:
 print("\n🚀 [2단계] 데이터 병합 및 마스터 파일 생성 프로세스를 시작합니다...")
 
 base_path = os.path.dirname(os.path.abspath(__file__))
+raw_data_dir = os.path.join(base_path, "raw_data")
+results_dir = os.path.join(base_path, "분석 결과")
+os.makedirs(results_dir, exist_ok=True)
 
-# 1. 1단계에서 수집한 일별 Raw 데이터 찾기
+# 1. raw_data 폴더에서 수집한 일별 Raw 데이터 찾기
 file_list = []
-if os.path.exists(base_path):
-    for f in os.listdir(base_path):
+if os.path.exists(raw_data_dir):
+    for f in os.listdir(raw_data_dir):
         if f.startswith("nairobi_raw_") and f.endswith(".csv"):
-            file_list.append(os.path.join(base_path, f))
+            file_list.append(os.path.join(raw_data_dir, f))
 
 if not file_list:
     print("❌ 수집된 부동산 raw 데이터가 없습니다. 1단계 크롤러를 먼저 실행해주세요.")
@@ -43,12 +46,12 @@ df_raw_clean = df_raw_clean.sort_values('Scraped_Date').reset_index(drop=True)
 
 print(f"✅ 총 {len(file_list)}일 치 부동산 데이터를 병합했습니다. (순수 매물: {len(df_raw_clean)}건)")
 
-# 3. 거시경제 데이터 불러오기 및 결합 (xlsx 우선, csv 폴백)
-macro_xlsx = os.path.join(base_path, "kenya_macro_history.xlsx")
-macro_csv = os.path.join(base_path, "kenya_macro.csv")
+# 3. 분석 결과 폴더에서 거시경제 데이터 불러오기 및 결합 (xlsx 우선, csv 폴백)
+macro_xlsx = os.path.join(results_dir, "kenya_macro_history.xlsx")
+macro_csv = os.path.join(results_dir, "kenya_macro.csv")
 
 if os.path.exists(macro_xlsx):
-    print("🔗 거시경제 엑셀(kenya_macro_history.xlsx)과 부동산 데이터를 결합 중...")
+    print(f"🔗 거시경제 엑셀({os.path.basename(macro_xlsx)})과 부동산 데이터를 결합 중...")
     df_macro = pd.read_excel(macro_xlsx, engine='openpyxl')
     df_macro['Date'] = pd.to_datetime(df_macro['Date'])
     df_macro = df_macro.sort_values('Date')
@@ -62,7 +65,7 @@ if os.path.exists(macro_xlsx):
     )
     print(f"  ✅ 거시경제 지표 결합 완료! (환율, 금리 등 {len(df_macro.columns)-1}개 지표)")
 elif os.path.exists(macro_csv):
-    print("🔗 거시경제 CSV(kenya_macro.csv)와 부동산 데이터를 결합 중...")
+    print(f"🔗 거시경제 CSV({os.path.basename(macro_csv)})과 부동산 데이터를 결합 중...")
     df_macro = pd.read_csv(macro_csv)
     df_macro['Date'] = pd.to_datetime(df_macro['Date'])
     df_macro = df_macro.sort_values('Date')
@@ -79,10 +82,10 @@ else:
     print(f"⚠️ 거시경제 파일을 찾을 수 없습니다. 부동산 데이터만으로 마스터를 생성합니다.")
     df_master = df_raw_clean
 
-# 4. 최종 마스터 데이터 저장
+# 4. 최종 마스터 데이터 저장 (분석 결과 폴더에 저장)
 today_date = datetime.now().strftime("%Y%m%d")
 master_filename = f"nairobi_master_data_{today_date}.csv"
-master_path = os.path.join(base_path, master_filename)
+master_path = os.path.join(results_dir, master_filename)
 
 df_master.to_csv(master_path, index=False, encoding="utf-8-sig")
 print(f"🎉 [최종 완료] 마스터 데이터가 '{master_filename}' 이름으로 저장되었습니다!")
