@@ -33,9 +33,11 @@ def generate_and_send_report():
     print("🚀 AI 주간 리포트 '즉시 발행' 프로세스를 시작합니다...")
     
     base_path = os.path.dirname(os.path.abspath(__file__))
+    results_dir = os.path.join(base_path, "분석 결과")
+    os.makedirs(results_dir, exist_ok=True)
     
-    # 2. 최신 마스터 데이터 로드
-    file_list = [os.path.join(base_path, f) for f in os.listdir(base_path) if f.startswith("nairobi_master_data_") and f.endswith(".csv")]
+    # 2. 최신 마스터 데이터 로드 (분석 결과 폴더에서 찾기)
+    file_list = [os.path.join(results_dir, f) for f in os.listdir(results_dir) if f.startswith("nairobi_master_data_") and f.endswith(".csv")]
     if not file_list:
         print("❌ 마스터 데이터를 찾을 수 없습니다.")
         return
@@ -48,9 +50,9 @@ def generate_and_send_report():
     usd_rate = latest_macro.get('USD_KES_Rate', '데이터 없음') if 'USD_KES_Rate' in latest_macro.index else '데이터 없음'
     cbr_rate = latest_macro.get('CBR_Rate', '데이터 없음') if 'CBR_Rate' in latest_macro.index else '데이터 없음'
     
-    # 거시경제 추세 분석 (엑셀에서 최근 데이터 읽기)
+    # 거시경제 추세 분석 (분석 결과 폴더에서 엑셀 읽기)
     macro_trend_text = ""
-    macro_xlsx = os.path.join(base_path, "kenya_macro_history.xlsx")
+    macro_xlsx = os.path.join(results_dir, "kenya_macro_history.xlsx")
     if os.path.exists(macro_xlsx):
         try:
             df_macro = pd.read_excel(macro_xlsx, engine='openpyxl')
@@ -68,16 +70,16 @@ def generate_and_send_report():
         except Exception as e:
             print(f"  ⚠️ 거시경제 추세 분석 실패: {e}")
     
-    # 머신러닝 상위 변수 가져오기
-    top_features_path = os.path.join(base_path, "top_features.txt")
+    # 머신러닝 상위 변수 가져오기 (분석 결과 폴더에서 찾기)
+    top_features_path = os.path.join(results_dir, "top_features.txt")
     top_features_data = "추출된 변수 데이터 없음"
     if os.path.exists(top_features_path):
         with open(top_features_path, "r", encoding="utf-8") as f:
             top_features_data = f.read().strip()
     
-    # [신규] 지역별 분석 데이터 가져오기
+    # 지역별 분석 데이터 가져오기 (분석 결과 폴더에서 찾기)
     regional_text = ""
-    regional_path = os.path.join(base_path, "regional_analysis.json")
+    regional_path = os.path.join(results_dir, "regional_analysis.json")
     if os.path.exists(regional_path):
         try:
             with open(regional_path, 'r', encoding='utf-8') as f:
@@ -165,10 +167,10 @@ def generate_and_send_report():
         print(f"   상세 응답: {resp_text}")
         ai_insight = f"[AI 자동 분석 일시 장애] 다음 주에 자동 복구됩니다.\n오류 내용: {e}"
 
-    # 5.5 Word 파일 생성 및 저장
+    # 5.5 Word 파일 생성 및 저장 (분석 결과 폴더에 생성)
     current_date = datetime.now().strftime('%Y%m%d')
     docx_filename = f"나이로비_부동산_주간_브리핑_{current_date}.docx"
-    docx_path = os.path.join(base_path, docx_filename)
+    docx_path = os.path.join(results_dir, docx_filename)
     
     print(f"📝 워드 문서 생성을 시작합니다: {docx_filename}")
     try:
@@ -257,9 +259,9 @@ def generate_and_send_report():
     
     msg.attach(MIMEText(html_body, 'html'))
 
-    # 7. 이미지 첨부 (변수 중요도 + 지역별 비교)
+    # 7. 이미지 첨부 (변수 중요도 + 지역별 비교) - 분석 결과 폴더에서 찾기
     for img_name in ["feature_importance.png", "regional_price_comparison.png"]:
-        img_path = os.path.join(base_path, img_name)
+        img_path = os.path.join(results_dir, img_name)
         if os.path.exists(img_path):
             with open(img_path, 'rb') as f:
                 msg.attach(MIMEImage(f.read(), name=img_name))
