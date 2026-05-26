@@ -96,7 +96,8 @@ def get_nairobi_data_pagination(max_pages=265):
     if not df.empty and 'Property_ID' in df.columns:
         df = df.drop_duplicates(subset=['Property_ID'])
 
-    save_path = os.path.dirname(os.path.abspath(__file__))
+    base_path = os.path.dirname(os.path.abspath(__file__))
+    save_path = os.path.join(base_path, "raw_data")
     os.makedirs(save_path, exist_ok=True) # 폴더가 없으면 에러 안 내고 생성
     
     # 초 단위 지저분한 파일명 대신, 깔끔하게 'nairobi_raw_20260426.csv' 형태로 고정
