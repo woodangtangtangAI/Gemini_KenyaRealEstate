@@ -1,0 +1,107 @@
+{
+  "Rhapta Road, Westlands": {
+    "count": 7,
+    "avg_price": 21142857,
+    "median_price": 20000000,
+    "min_price": 13500000,
+    "max_price": 25750000
+  },
+  "4 bedroom apartment for sale in Westlands": {
+    "count": 6,
+    "avg_price": 18000000,
+    "median_price": 18000000,
+    "min_price": 18000000,
+    "max_price": 18000000
+  },
+  "Parklands, Westlands": {
+    "count": 28,
+    "avg_price": 17610000,
+    "median_price": 18500000,
+    "min_price": 6590000,
+    "max_price": 25000000
+  },
+  "Brookside, Westlands": {
+    "count": 14,
+    "avg_price": 16585714,
+    "median_price": 20000000,
+    "min_price": 5000000,
+    "max_price": 25000000
+  },
+  "General Mathenge, Westlands": {
+    "count": 15,
+    "avg_price": 16382400,
+    "median_price": 15400000,
+    "min_price": 6966000,
+    "max_price": 24500000
+  },
+  "4 bedroom apartment for sale in Kilimani": {
+    "count": 7,
+    "avg_price": 13500000,
+    "median_price": 13500000,
+    "min_price": 13500000,
+    "max_price": 13500000
+  },
+  "4 bedroom apartment for sale in Lavington": {
+    "count": 6,
+    "avg_price": 13500000,
+    "median_price": 13500000,
+    "min_price": 13500000,
+    "max_price": 13500000
+  },
+  "4 bedroom apartment for sale in Kileleshwa": {
+    "count": 7,
+    "avg_price": 13500000,
+    "median_price": 13500000,
+    "min_price": 13500000,
+    "max_price": 13500000
+  },
+  "🌿 Luxury Apartments for Sale in Kileleshwa, Na...": {
+    "count": 5,
+    "avg_price": 12940000,
+    "median_price": 12500000,
+    "min_price": 5500000,
+    "max_price": 17100000
+  },
+  "3 bedroom apartment for sale in Westlands": {
+    "count": 14,
+    "avg_price": 12385714,
+    "median_price": 13000000,
+    "min_price": 11000000,
+    "max_price": 13000000
+  },
+  "Luxury Apartments for Sale in Upper Hill, Nairo...": {
+    "count": 6,
+    "avg_price": 11833333,
+    "median_price": 11200000,
+    "min_price": 6900000,
+    "max_price": 17400000
+  },
+  "Riverside, Westlands": {
+    "count": 38,
+    "avg_price": 11122105,
+    "median_price": 10900000,
+    "min_price": 100000,
+    "max_price": 23000000
+  },
+  "3 bedroom apartment for sale in Kileleshwa": {
+    "count": 10,
+    "avg_price": 10800000,
+    "median_price": 10000000,
+    "min_price": 10000000,
+    "max_price": 13000000
+  },
+  "Westlands Area, Westlands": {
+    "count": 413,
+    "avg_price": 10224951,
+    "median_price": 8500000,
+    "min_price": 4000000,
+    "max_price": 24000000
+  },
+  "3 bedroom apartment for sale in Kilimani": {
+    "count": 6,
+    "avg_price": 10000000,
+    "median_price": 10000000,
+    "min_price": 10000000,
+    "max_price": 10000000
+  }
+}
