@@ -1,1 +1,1 @@
-Bedrooms (0.802), Bathrooms (0.084), Location (0.066), Size_sqm (0.048)
+Bedrooms (0.601), Location (0.245), Bathrooms (0.091), Size_sqm (0.062), USD_KES_Rate (0.000)
