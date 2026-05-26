@@ -15,7 +15,10 @@ def fetch_and_accumulate_macro():
     print("📊 [0단계] 거시경제 데이터 실시간 수집 및 축적을 시작합니다...")
     
     base_path = os.path.dirname(os.path.abspath(__file__))
-    xlsx_path = os.path.join(base_path, "kenya_macro_history.xlsx")
+    # 분석 결과 폴더 내에 저장하도록 경로 변경
+    xlsx_dir = os.path.join(base_path, "분석 결과")
+    os.makedirs(xlsx_dir, exist_ok=True)
+    xlsx_path = os.path.join(xlsx_dir, "kenya_macro_history.xlsx")
     today = datetime.now().strftime("%Y-%m-%d")
     
     # 1. 기존 엑셀 파일 읽기 (없으면 빈 DataFrame 생성)
@@ -77,6 +80,6 @@ def fetch_and_accumulate_macro():
     df_macro.to_excel(xlsx_path, index=False, engine='openpyxl')
     print(f"  ✅ 거시경제 데이터 축적 완료! 현재 총 {len(df_macro)}행 ({xlsx_path})")
     print(f"     최신 행: {new_row}")
-
+ 
 if __name__ == "__main__":
     fetch_and_accumulate_macro()
