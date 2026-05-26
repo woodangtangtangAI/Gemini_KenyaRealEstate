@@ -20,13 +20,15 @@ def train_real_estate_model():
     print("🚀 [System] 3단계: 나이로비 부동산 가격 예측(XGBoost) 및 요인 분석을 시작합니다...")
 
     base_path = os.path.dirname(os.path.abspath(__file__))
+    results_dir = os.path.join(base_path, "분석 결과")
+    os.makedirs(results_dir, exist_ok=True)
     
-    # 1. 마스터 데이터 자동 탐색
+    # 1. 마스터 데이터 자동 탐색 (분석 결과 폴더에서 탐색)
     file_list = []
-    if os.path.exists(base_path):
-        for file in os.listdir(base_path):
+    if os.path.exists(results_dir):
+        for file in os.listdir(results_dir):
             if file.startswith("nairobi_master_data_") and file.endswith(".csv"):
-                file_list.append(os.path.join(base_path, file))
+                file_list.append(os.path.join(results_dir, file))
     
     if not file_list:
         print("❌ [오류] 마스터 데이터를 찾을 수 없습니다. 2단계 병합이 완료되었는지 확인하세요.")
@@ -99,7 +101,7 @@ def train_real_estate_model():
                 'max_price': int(row['최고가'])
             }
         
-        regional_path = os.path.join(base_path, "regional_analysis.json")
+        regional_path = os.path.join(results_dir, "regional_analysis.json")
         with open(regional_path, 'w', encoding='utf-8') as f:
             json.dump(regional_dict, f, ensure_ascii=False, indent=2)
         print(f"   ✅ 지역별 분석 결과 저장: regional_analysis.json")
@@ -114,7 +116,7 @@ def train_real_estate_model():
             ax.xaxis.set_major_formatter(plt.FuncFormatter(lambda x, p: f'{x:,.0f}'))
             plt.tight_layout()
             
-            regional_img_path = os.path.join(base_path, "regional_price_comparison.png")
+            regional_img_path = os.path.join(results_dir, "regional_price_comparison.png")
             plt.savefig(regional_img_path, dpi=300)
             plt.close()
             print(f"   ✅ 지역별 가격 비교 차트 저장: regional_price_comparison.png")
@@ -182,11 +184,11 @@ def train_real_estate_model():
 
     # 상위 5개 중요 변수를 텍스트 파일로 저장 (send_report.py 에서 프롬프트 주입용)
     top_features_text = ", ".join([f"{row['Feature']} ({row['Importance']:.3f})" for idx, row in importance_df.head(5).iterrows()])
-    with open(os.path.join(base_path, "top_features.txt"), "w", encoding="utf-8") as f:
+    with open(os.path.join(results_dir, "top_features.txt"), "w", encoding="utf-8") as f:
         f.write(top_features_text)
 
     img_filename = "feature_importance.png"
-    img_path = os.path.join(base_path, img_filename)
+    img_path = os.path.join(results_dir, img_filename)
     plt.savefig(img_path, dpi=300)
     plt.close()
 
