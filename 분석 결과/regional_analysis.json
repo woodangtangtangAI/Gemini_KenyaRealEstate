@@ -1,38 +1,59 @@
 {
+  "General Mathenge, Westlands": {
+    "count": 58,
+    "avg_price": 21106507,
+    "median_price": 22000000,
+    "min_price": 6966000,
+    "max_price": 36000000
+  },
+  "Parklands, Westlands": {
+    "count": 149,
+    "avg_price": 20284295,
+    "median_price": 21000000,
+    "min_price": 140000,
+    "max_price": 35000000
+  },
+  "Brookside, Westlands": {
+    "count": 28,
+    "avg_price": 19828571,
+    "median_price": 20200000,
+    "min_price": 5000000,
+    "max_price": 32000000
+  },
+  "Westlands": {
+    "count": 5,
+    "avg_price": 19800000,
+    "median_price": 13000000,
+    "min_price": 13000000,
+    "max_price": 30000000
+  },
+  "Spring Valley, Westlands": {
+    "count": 14,
+    "avg_price": 19325714,
+    "median_price": 9700000,
+    "min_price": 280000,
+    "max_price": 36000000
+  },
   "4 bedroom apartment for sale in Westlands": {
-    "count": 9,
+    "count": 10,
     "avg_price": 18000000,
     "median_price": 18000000,
     "min_price": 18000000,
     "max_price": 18000000
   },
-  "Brookside, Westlands": {
-    "count": 12,
-    "avg_price": 17458333,
-    "median_price": 20100000,
-    "min_price": 5000000,
-    "max_price": 25000000
-  },
-  "General Mathenge, Westlands": {
-    "count": 24,
-    "avg_price": 17070916,
-    "median_price": 15700000,
-    "min_price": 6966000,
-    "max_price": 30000000
-  },
-  "Parklands, Westlands": {
-    "count": 57,
-    "avg_price": 16337894,
-    "median_price": 17000000,
-    "min_price": 140000,
-    "max_price": 25000000
-  },
   "Rhapta Road, Westlands": {
-    "count": 22,
-    "avg_price": 15629545,
-    "median_price": 14400000,
-    "min_price": 5100000,
-    "max_price": 25750000
+    "count": 53,
+    "avg_price": 16684905,
+    "median_price": 18000000,
+    "min_price": 0,
+    "max_price": 33000000
+  },
+  "Upper Hill": {
+    "count": 30,
+    "avg_price": 15245053,
+    "median_price": 12800000,
+    "min_price": 6600000,
+    "max_price": 29303995
   },
   "Gigiri, Westlands": {
     "count": 6,
@@ -40,6 +61,27 @@
     "median_price": 14950000,
     "min_price": 14000000,
     "max_price": 15900000
+  },
+  "South C": {
+    "count": 17,
+    "avg_price": 14588235,
+    "median_price": 15500000,
+    "min_price": 6000000,
+    "max_price": 20000000
+  },
+  "Thika Road": {
+    "count": 21,
+    "avg_price": 14423809,
+    "median_price": 15500000,
+    "min_price": 3300000,
+    "max_price": 25500000
+  },
+  "Riverside, Westlands": {
+    "count": 119,
+    "avg_price": 14027907,
+    "median_price": 12500000,
+    "min_price": 100000,
+    "max_price": 37000000
   },
   "4 bedroom apartment for sale in Kilimani": {
     "count": 9,
@@ -49,59 +91,17 @@
     "max_price": 13500000
   },
   "4 bedroom apartment for sale in Lavington": {
-    "count": 7,
+    "count": 8,
     "avg_price": 13500000,
     "median_price": 13500000,
     "min_price": 13500000,
     "max_price": 13500000
   },
   "4 bedroom apartment for sale in Kileleshwa": {
-    "count": 11,
+    "count": 12,
     "avg_price": 13500000,
     "median_price": 13500000,
     "min_price": 13500000,
     "max_price": 13500000
-  },
-  "Upper Hill": {
-    "count": 16,
-    "avg_price": 13012500,
-    "median_price": 11500000,
-    "min_price": 6600000,
-    "max_price": 24000000
-  },
-  "🌿 Luxury Apartments for Sale in Kileleshwa, Na...": {
-    "count": 5,
-    "avg_price": 12940000,
-    "median_price": 12500000,
-    "min_price": 5500000,
-    "max_price": 17100000
-  },
-  "3 bedroom apartment for sale in Westlands": {
-    "count": 16,
-    "avg_price": 12575000,
-    "median_price": 13000000,
-    "min_price": 11000000,
-    "max_price": 13000000
-  },
-  "Luxury Apartments for Sale in Upper Hill, Nairo...": {
-    "count": 5,
-    "avg_price": 11960000,
-    "median_price": 11200000,
-    "min_price": 6900000,
-    "max_price": 17400000
-  },
-  "Kileleshwa": {
-    "count": 401,
-    "avg_price": 11610573,
-    "median_price": 9000000,
-    "min_price": 3000000,
-    "max_price": 30000000
-  },
-  "Riverside, Westlands": {
-    "count": 61,
-    "avg_price": 11445016,
-    "median_price": 10500000,
-    "min_price": 100000,
-    "max_price": 30000000
   }
 }
