@@ -14,6 +14,11 @@ from datetime import datetime
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
+def get_run_folder_name():
+    days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+    day_of_week = days[datetime.now().weekday()]
+    return datetime.now().strftime(f"%Y%m%d({day_of_week})")
+
 def scrape_listings_by_type(driver, listing_type, max_pages):
     print(f"🚀 [Scraper] {listing_type} 수집을 시작합니다 (최대 {max_pages}페이지)...")
     raw_data_list = []
@@ -68,7 +73,6 @@ def scrape_listings_by_type(driver, listing_type, max_pages):
                         loc = p
 
                 if price != "NaN":
-                    # Convert values to clean types
                     try:
                         price_val = float(price)
                     except:
@@ -104,12 +108,12 @@ def scrape_kenya_real_estate_news():
     import json
     
     base_path = os.path.dirname(os.path.abspath(__file__))
-    results_dir = os.path.join(base_path, "분석 결과")
-    os.makedirs(results_dir, exist_ok=True)
-    news_json_path = os.path.join(results_dir, "scraped_news.json")
+    # 금주 결과물 폴더에 뉴스 저장
+    run_folder = os.path.join(base_path, get_run_folder_name())
+    os.makedirs(run_folder, exist_ok=True)
+    news_json_path = os.path.join(run_folder, "scraped_news.json")
     
     try:
-        # Search query on Google News (localized to Kenya)
         query = 'Nairobi+real+estate+OR+Nairobi+zoning+OR+Nairobi+infrastructure'
         url = f'https://news.google.com/rss/search?q={query}&hl=en-KE&gl=KE&ceid=KE:en'
         
@@ -119,7 +123,7 @@ def scrape_kenya_real_estate_news():
         root = ET.fromstring(xml_data)
         news_items = []
         
-        for item in root.findall('.//item')[:10]: # Collect top 10 articles
+        for item in root.findall('.//item')[:10]:
             title = item.find('title').text
             link = item.find('link').text
             pub_date = item.find('pubDate').text
@@ -134,11 +138,10 @@ def scrape_kenya_real_estate_news():
             
         with open(news_json_path, 'w', encoding='utf-8') as f:
             json.dump(news_items, f, ensure_ascii=False, indent=2)
-        print(f"  ✅ 실시간 기사 {len(news_items)}개 수집 및 저장 완료: scraped_news.json")
+        print(f"  ✅ 실시간 기사 {len(news_items)}개 수집 및 저장 완료: {news_json_path}")
         
     except Exception as e:
         print(f"  ⚠️ 뉴스 수집 실패: {e}")
-        # Save an empty list or keep existing
         if not os.path.exists(news_json_path):
             with open(news_json_path, 'w', encoding='utf-8') as f:
                 json.dump([], f)
@@ -173,7 +176,7 @@ def get_nairobi_data_pagination(max_pages_sale=100, max_pages_rent=30):
     # 결과 처리 및 저장
     df = pd.DataFrame(combined_data)
     
-    # 중복 제거 (Property_ID 기준)
+    # 중복 제거
     if not df.empty and 'Property_ID' in df.columns:
         df = df.drop_duplicates(subset=['Property_ID'])
 
@@ -195,6 +198,4 @@ def get_nairobi_data_pagination(max_pages_sale=100, max_pages_rent=30):
         print("\n⚠️ 수집된 부동산 매물 데이터가 없습니다.")
 
 if __name__ == "__main__":
-    # GitHub Actions 등 클라우드나 로컬 스케줄러 환경에서는 실행 시간 제약을 방지하기 위해 
-    # 매매 100페이지, 월세 30페이지 수준으로 한정해 안전하고 빠르게 구동시킵니다.
     get_nairobi_data_pagination(max_pages_sale=100, max_pages_rent=30)
