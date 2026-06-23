@@ -3,6 +3,7 @@ try: sys.stdout.reconfigure(encoding='utf-8')
 except: pass
 
 import os
+import re
 import json
 import smtplib
 import pandas as pd
@@ -32,9 +33,6 @@ SENDER_PW = os.getenv("MY_PASSWORD")
 RECEIVER_EMAIL = os.getenv("RECEIVER_EMAIL")
 
 def set_cell_border(cell, **kwargs):
-    """
-    docx cell 테두리 스타일 지정용 헬퍼 함수
-    """
     tc = cell._tc
     tcPr = tc.get_or_add_tcPr()
     tcBorders = tcPr.first_child_found_in("w:tcBorders")
@@ -53,20 +51,32 @@ def set_cell_border(cell, **kwargs):
             for key, val in edge_data.items():
                 element.set(qn('w:{}'.format(key)), str(val))
 
+def get_latest_master_data(base_path):
+    run_folders = [d for d in os.listdir(base_path) if os.path.isdir(os.path.join(base_path, d)) and re.match(r'^\d{8}\([a-zA-Z]{3}\)$', d)]
+    file_list = []
+    for folder in run_folders:
+        folder_path = os.path.join(base_path, folder)
+        for file in os.listdir(folder_path):
+            if file.startswith("nairobi_master_data_") and file.endswith(".csv"):
+                file_list.append(os.path.join(folder_path, file))
+    if not file_list:
+        return None
+    return max(file_list, key=os.path.getmtime)
+
 def generate_and_send_report():
     print("🚀 AI 주간 리포트 '즉시 발행' 프로세스를 시작합니다...")
     
     base_path = os.path.dirname(os.path.abspath(__file__))
-    results_dir = os.path.join(base_path, "분석 결과")
-    os.makedirs(results_dir, exist_ok=True)
     
-    # 2. 최신 마스터 데이터 로드 (분석 결과 폴더에서 찾기)
-    file_list = [os.path.join(results_dir, f) for f in os.listdir(results_dir) if f.startswith("nairobi_master_data_") and f.endswith(".csv")]
-    if not file_list:
-        print("❌ 마스터 데이터를 찾을 수 없습니다.")
+    # 2. 최신 마스터 데이터 로드 (날짜별 폴더 내에서 찾기)
+    latest_file = get_latest_master_data(base_path)
+    if not latest_file:
+        print("❌ [오류] 마스터 데이터를 찾을 수 없습니다.")
         return
         
-    latest_file = max(file_list, key=os.path.getmtime)
+    run_dir = os.path.dirname(latest_file)
+    print(f"📁 타겟 마스터 데이터: '{os.path.basename(latest_file)}' (폴더: {os.path.basename(run_dir)})")
+    
     df = pd.read_csv(latest_file)
     latest_macro = df.iloc[-1]
     
@@ -75,14 +85,14 @@ def generate_and_send_report():
     cbr_rate = latest_macro.get('CBR_Rate', '데이터 없음') if 'CBR_Rate' in latest_macro.index else '데이터 없음'
     remittance_val = latest_macro.get('Remittance_M_USD', '데이터 없음') if 'Remittance_M_USD' in latest_macro.index else '데이터 없음'
     
-    # 거시경제 추세 분석 (분석 결과 폴더에서 엑셀 읽기)
+    # 거시경제 추세 분석 (루트 폴더에서 엑셀 읽기)
     macro_trend_text = ""
-    macro_xlsx = os.path.join(results_dir, "kenya_macro_history.xlsx")
+    macro_xlsx = os.path.join(base_path, "kenya_macro_history.xlsx")
     if os.path.exists(macro_xlsx):
         try:
             df_macro = pd.read_excel(macro_xlsx, engine='openpyxl')
             if len(df_macro) >= 2 and 'USD_KES_Rate' in df_macro.columns:
-                recent = df_macro.tail(5)  # 최근 5주 데이터
+                recent = df_macro.tail(5)
                 rates = recent['USD_KES_Rate'].dropna().tolist()
                 dates = recent['Date'].astype(str).tolist()
                 trend_pairs = [f"{d}: {r:.2f} KES" for d, r in zip(dates, rates)]
@@ -95,8 +105,8 @@ def generate_and_send_report():
         except Exception as e:
             print(f"  ⚠️ 거시경제 추세 분석 실패: {e}")
     
-    # 머신러닝 상위 변수 가져오기 (분석 결과 폴더에서 찾기)
-    top_features_path = os.path.join(results_dir, "top_features.txt")
+    # 머신러닝 상위 변수 가져오기 (결과물 폴더에서 찾기)
+    top_features_path = os.path.join(run_dir, "top_features.txt")
     top_features_data = "추출된 변수 데이터 없음"
     if os.path.exists(top_features_path):
         try:
@@ -105,11 +115,11 @@ def generate_and_send_report():
         except Exception as e:
             print(f"  ⚠️ top_features.txt 읽기 실패: {e}")
             
-    # 지역별 분석 데이터 가져오기 (분석 결과 폴더에서 찾기)
+    # 지역별 분석 데이터 가져오기 (결과물 폴더에서 찾기)
     regional_sales_text = ""
     regional_yield_text = ""
     regional_data = {}
-    regional_path = os.path.join(results_dir, "regional_analysis.json")
+    regional_path = os.path.join(run_dir, "regional_analysis.json")
     if os.path.exists(regional_path):
         try:
             with open(regional_path, 'r', encoding='utf-8') as f:
@@ -129,9 +139,9 @@ def generate_and_send_report():
         except Exception as e:
             print(f"  ⚠️ 지역별 분석 데이터 로드 실패: {e}")
             
-    # 최신 뉴스 가져오기 (분석 결과 폴더에서 찾기)
+    # 최신 뉴스 가져오기 (결과물 폴더에서 찾기)
     news_text = ""
-    news_path = os.path.join(results_dir, "scraped_news.json")
+    news_path = os.path.join(run_dir, "scraped_news.json")
     if os.path.exists(news_path):
         try:
             with open(news_path, 'r', encoding='utf-8') as f:
@@ -201,7 +211,7 @@ def generate_and_send_report():
     except Exception as e:
         print(f"⚠️ 모델 검색 중 에러 발생 (기본값 설정): {e}")
 
-    # 5. 선택된 모델과 통신 (API 키 유출 예외 처리 적용)
+    # 5. 선택된 모델과 통신
     print(f"🧠 {target_model} 모델에 3대 테마 기반 정밀 분석을 요청합니다...")
     ai_insight = ""
     is_key_leaked = False
@@ -247,16 +257,15 @@ def generate_and_send_report():
         else:
             ai_insight = f"[AI 정밀 분석 장애] 일시적 장애가 발생했습니다.\n상세 에러 내용: {e}"
 
-    # 5.5 Word 파일 생성 및 저장 (분석 결과 폴더에 생성)
+    # 5.5 Word 파일 생성 및 저장 (금주 결과물 폴더에 생성)
     current_date = datetime.now().strftime('%Y%m%d')
     docx_filename = f"나이로비_부동산_주간_브리핑_{current_date}.docx"
-    docx_path = os.path.join(results_dir, docx_filename)
+    docx_path = os.path.join(run_dir, docx_filename)
     
     print(f"📝 워드 문서 생성을 시작합니다: {docx_filename}")
     try:
         doc = Document()
         
-        # 문서 기본 스타일 지정
         style = doc.styles['Normal']
         font = style.font
         font.name = 'Malgun Gothic'
@@ -278,7 +287,6 @@ def generate_and_send_report():
         hdr_cells[2].text = '케냐 기준금리'
         hdr_cells[3].text = '송금 유입액 (USD)'
         
-        # 헤더 셀 스타일 적용
         for cell in hdr_cells:
             cell.paragraphs[0].runs[0].font.bold = True
             set_cell_border(cell, bottom={"sz": 12, "val": "single", "color": "004A99", "space": "0"})
@@ -301,7 +309,7 @@ def generate_and_send_report():
         if macro_trend_text:
             p_macro.add_run(f"• 환율 변동 추이: {macro_trend_text.strip()}\n")
             
-        # 2. 지역별 시세 및 수익률 현황 테이블 추가
+        # 2. 지역별 시세 및 수익률 현황 테이블
         doc.add_heading('2. 지역별 매매 시세 및 임대 수익률 현황', level=1)
         
         sales_data = regional_data.get("sales", {})
@@ -351,7 +359,7 @@ def generate_and_send_report():
                 
         # 4. 모델 중요 피처
         doc.add_heading('4. 예측 모델의 중요 변수 기여도 (XGBoost)', level=1)
-        doc.add_paragraph(f"XGBoost 머신러닝 모델의 집값 및 가격/sqm 요인 기여도 순위: {top_features_data}")
+        doc.add_paragraph(f"XGBoost 머신러닝 모델의 가격 요인 기여도 순위: {top_features_data}")
         
         doc.save(docx_path)
         print(f"✅ 워드 리포트 생성 및 저장 완료: {docx_path}")
@@ -395,7 +403,7 @@ def generate_and_send_report():
         except:
             news_html = "<p>수집된 최신 뉴스가 없습니다.</p>"
             
-    # 에러 안내 배너 (API 키 정지 시 배너 출력)
+    # 에러 안내 배너
     warning_banner = ""
     if is_key_leaked:
         warning_banner = """
@@ -447,9 +455,9 @@ def generate_and_send_report():
     
     msg.attach(MIMEText(html_body, 'html'))
 
-    # 7. 이미지 첨부 (변수 중요도 + 지역별 비교) - 분석 결과 폴더에서 로드
+    # 이미지 첨부 (결과물 폴더에서 로드)
     for img_name in ["feature_importance.png", "regional_price_comparison.png"]:
-        img_path = os.path.join(results_dir, img_name)
+        img_path = os.path.join(run_dir, img_name)
         if os.path.exists(img_path):
             with open(img_path, 'rb') as f:
                 msg.attach(MIMEImage(f.read(), name=img_name))
