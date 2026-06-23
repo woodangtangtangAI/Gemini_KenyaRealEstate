@@ -63,7 +63,7 @@ if os.path.exists(macro_xlsx):
         right_on='Date', 
         direction='backward'
     )
-    print(f"  ✅ 거시경제 지표 결합 완료! (환율, 금리 등 {len(df_macro.columns)-1}개 지표)")
+    print(f"  ✅ 거시경제 지표 결합 완료! (환율, 금리, 송금액 등 {len(df_macro.columns)-1}개 지표)")
 elif os.path.exists(macro_csv):
     print(f"🔗 거시경제 CSV({os.path.basename(macro_csv)})과 부동산 데이터를 결합 중...")
     df_macro = pd.read_csv(macro_csv)
@@ -91,6 +91,6 @@ df_master.to_csv(master_path, index=False, encoding="utf-8-sig")
 print(f"🎉 [최종 완료] 마스터 데이터가 '{master_filename}' 이름으로 저장되었습니다!")
 
 # 마스터 데이터에 거시경제 컬럼 존재 여부 확인
-macro_cols = ['USD_KES_Rate', 'CBR_Rate', 'CPI_Index']
+macro_cols = ['USD_KES_Rate', 'CBR_Rate', 'Remittance_M_USD', 'CPI_Index']
 found = [c for c in macro_cols if c in df_master.columns]
 print(f"  📊 거시경제 컬럼 확인: {found if found else '없음 (거시경제 파일 누락)'}")
