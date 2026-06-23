@@ -5,6 +5,7 @@ except: pass
 """
 [개편] fetch_macro.py - 거시경제 데이터 실시간 수집 및 단일 엑셀 축적
 케냐 중앙은행(CBK)에서 기준금리(CBR) 및 해외송금액(Remittances)을 동적으로 수집합니다.
+엑셀 파일은 루트 디렉토리에 누적 저장됩니다.
 """
 import os
 import re
@@ -18,9 +19,7 @@ def fetch_and_accumulate_macro():
     print("📊 [0단계] 거시경제 데이터 실시간 수집 및 축적을 시작합니다...")
     
     base_path = os.path.dirname(os.path.abspath(__file__))
-    xlsx_dir = os.path.join(base_path, "분석 결과")
-    os.makedirs(xlsx_dir, exist_ok=True)
-    xlsx_path = os.path.join(xlsx_dir, "kenya_macro_history.xlsx")
+    xlsx_path = os.path.join(base_path, "kenya_macro_history.xlsx")
     today = datetime.now().strftime("%Y-%m-%d")
     
     # 1. 기존 엑셀 파일 읽기 (없으면 빈 DataFrame 생성)
