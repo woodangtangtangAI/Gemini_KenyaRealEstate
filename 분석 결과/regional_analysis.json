@@ -1,7 +1,7 @@
 {
   "General Mathenge, Westlands": {
-    "count": 57,
-    "avg_price": 20206622,
+    "count": 60,
+    "avg_price": 20292994,
     "median_price": 20000000,
     "min_price": 6966000,
     "max_price": 34000000
@@ -14,94 +14,94 @@
     "max_price": 30000000
   },
   "Brookside, Westlands": {
-    "count": 36,
-    "avg_price": 19611111,
-    "median_price": 20100000,
+    "count": 49,
+    "avg_price": 19459183,
+    "median_price": 20000000,
     "min_price": 5000000,
     "max_price": 32000000
   },
   "Parklands, Westlands": {
-    "count": 155,
-    "avg_price": 19478451,
+    "count": 160,
+    "avg_price": 19362875,
     "median_price": 20000000,
     "min_price": 140000,
     "max_price": 32000000
   },
+  "Gigiri, Westlands": {
+    "count": 13,
+    "avg_price": 18430769,
+    "median_price": 15900000,
+    "min_price": 14000000,
+    "max_price": 24000000
+  },
   "4 bedroom apartment for sale in Westlands": {
-    "count": 16,
+    "count": 17,
     "avg_price": 18000000,
     "median_price": 18000000,
     "min_price": 18000000,
     "max_price": 18000000
   },
   "Rhapta Road, Westlands": {
-    "count": 57,
-    "avg_price": 16131578,
-    "median_price": 17000000,
+    "count": 68,
+    "avg_price": 15986911,
+    "median_price": 16600000,
     "min_price": 0,
     "max_price": 33000000
   },
   "Upper Hill": {
-    "count": 29,
-    "avg_price": 15270744,
+    "count": 30,
+    "avg_price": 15245053,
     "median_price": 12800000,
     "min_price": 6600000,
     "max_price": 29303995
   },
-  "Gigiri, Westlands": {
-    "count": 6,
-    "avg_price": 14950000,
-    "median_price": 14950000,
-    "min_price": 14000000,
-    "max_price": 15900000
-  },
-  "South C": {
-    "count": 16,
-    "avg_price": 14875000,
-    "median_price": 15500000,
-    "min_price": 6000000,
-    "max_price": 20000000
+  "4 bedroom apartment for sale in Kileleshwa": {
+    "count": 21,
+    "avg_price": 14404761,
+    "median_price": 13500000,
+    "min_price": 13500000,
+    "max_price": 23000000
   },
   "Thika Road": {
-    "count": 23,
-    "avg_price": 14604347,
-    "median_price": 15500000,
+    "count": 26,
+    "avg_price": 13980769,
+    "median_price": 15250000,
     "min_price": 3300000,
     "max_price": 25500000
   },
-  "4 bedroom apartment for sale in Kilimani": {
-    "count": 12,
-    "avg_price": 13500000,
-    "median_price": 13500000,
-    "min_price": 13500000,
-    "max_price": 13500000
+  "South C": {
+    "count": 20,
+    "avg_price": 13521500,
+    "median_price": 15500000,
+    "min_price": 0,
+    "max_price": 20000000
   },
-  "4 bedroom apartment for sale in Lavington": {
+  "4 bedroom apartment for sale in Kilimani": {
     "count": 13,
     "avg_price": 13500000,
     "median_price": 13500000,
     "min_price": 13500000,
     "max_price": 13500000
   },
-  "4 bedroom apartment for sale in Kileleshwa": {
-    "count": 17,
+  "4 bedroom apartment for sale in Lavington": {
+    "count": 15,
     "avg_price": 13500000,
     "median_price": 13500000,
     "min_price": 13500000,
     "max_price": 13500000
   },
+  "Langata": {
+    "count": 15,
+    "avg_price": 13480000,
+    "median_price": 14200000,
+    "min_price": 7500000,
+    "max_price": 18000000
+  },
   "Riverside, Westlands": {
-    "count": 129,
-    "avg_price": 13249387,
-    "median_price": 12500000,
+    "count": 161,
+    "avg_price": 13321621,
+    "median_price": 12000000,
     "min_price": 100000,
     "max_price": 30000000
-  },
-  "Waiyaki Way, Westlands": {
-    "count": 7,
-    "avg_price": 13142857,
-    "median_price": 11500000,
-    "min_price": 10500000,
-    "max_price": 16000000
   }
 }
