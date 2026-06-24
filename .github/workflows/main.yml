@@ -2,7 +2,7 @@ name: Kenya Real Estate Pipeline
 
 on:
   schedule:
-    - cron: '0 2 * * 2'  # 매주 화요일 케냐 시간 05:00 (한국 시간 11:00)
+    - cron: '0 2 * * 2'  # 매 화요일 케냐 시간 05:00 (한국 시간 11:00)
   workflow_dispatch:
 
 jobs:
@@ -24,13 +24,13 @@ jobs:
       - name: 1. 데이터 수집 (Scraping)
         run: python scraper.py
         
-      - name: 2. 거시경제 데이터 병합
+      - name: 2. 거시경제 데이터 결합
         run: python "Kenya 거시경제.py"
         
-      - name: 3. 머신러닝 분석 (XGBoost)
+      - name: 3. 임대수익률 분석 및 예측 (XGBoost)
         run: python ml_predict.py
         
-      - name: 4. AI 리포트 작성 및 메일 발송
+      - name: 4. AI 리포트 작성 및 이메일 발송
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           MY_EMAIL: ${{ secrets.MY_EMAIL }}
@@ -38,10 +38,9 @@ jobs:
           RECEIVER_EMAIL: ${{ secrets.RECEIVER_EMAIL }}
         run: python send_report.py
 
-      - name: 5. 추출된 데이터 영구 보존 (Commit)
+      - name: 5. 구글 드라이브 업로드 (Upload to Google Drive)
+        env:
+          GDRIVE_TOKEN_JSON: ${{ secrets.GDRIVE_TOKEN_JSON }}
         run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add .
-          git diff --quiet && git diff --staged --quiet || git commit -m "Auto-update Real Estate data and report"
-          git push
+          python -c "import os, json; json.dump(json.loads(os.environ['GDRIVE_TOKEN_JSON']), open('token.json', 'w'))"
+          python upload_to_gdrive.py
