@@ -211,31 +211,65 @@ def generate_and_send_report():
     except Exception as e:
         print(f"⚠️ 모델 검색 중 에러 발생 (기본값 설정): {e}")
 
-    # 5. 선택된 모델과 통신
+    # 5. 선택된 모델과 통신 (재시도 로직 포함)
+    import time as _time
     print(f"🧠 {target_model} 모델에 3대 테마 기반 정밀 분석을 요청합니다...")
     ai_insight = ""
     is_key_leaked = False
     
-    url = f"https://generativelanguage.googleapis.com/v1beta/{target_model}:generateContent?key={GENAI_API_KEY}"
-    headers = {'Content-Type': 'application/json'}
-    data = {
-        "contents": [{"parts": [{"text": prompt}]}]
-    }
+    # 시도할 모델 목록: 1순위 → 대체 모델 순서
+    models_to_try = [target_model]
+    fallback_models = ["models/gemini-2.5-flash", "models/gemini-1.5-pro", "models/gemini-1.5-pro-latest", "models/gemini-1.5-flash"]
+    for fm in fallback_models:
+        if fm != target_model and fm in available_models:
+            models_to_try.append(fm)
     
-    try:
-        response = requests.post(url, headers=headers, json=data, timeout=120)
-        response_data = response.json()
-        
-        if response.status_code == 403 and "leaked" in str(response_data).lower():
-            is_key_leaked = True
-            raise Exception("Gemini API key가 유출로 인해 차단된 상태입니다.")
-        elif response.status_code != 200:
-            raise Exception(f"API Error Code {response.status_code}: {response_data}")
+    MAX_RETRIES = 3
+    RETRY_WAIT = 30  # seconds
+    
+    for model_name in models_to_try:
+        if ai_insight:
+            break
+        for attempt in range(1, MAX_RETRIES + 1):
+            url = f"https://generativelanguage.googleapis.com/v1beta/{model_name}:generateContent?key={GENAI_API_KEY}"
+            req_headers = {'Content-Type': 'application/json'}
+            req_data = {
+                "contents": [{"parts": [{"text": prompt}]}]
+            }
             
-        ai_insight = response_data['candidates'][0]['content']['parts'][0]['text']
-        print("✅ 퀀트 분석 보고서 초안이 완벽히 도출되었습니다!")
-    except Exception as e:
-        print(f"❌ [AI 통신 실패] {e}")
+            try:
+                print(f"  📡 [{model_name}] 시도 {attempt}/{MAX_RETRIES}...")
+                response = requests.post(url, headers=req_headers, json=req_data, timeout=120)
+                response_data = response.json()
+                
+                if response.status_code == 403 and "leaked" in str(response_data).lower():
+                    is_key_leaked = True
+                    raise Exception("Gemini API key가 유출로 인해 차단된 상태입니다.")
+                elif response.status_code == 503 or response.status_code == 429:
+                    print(f"  ⏳ 서버 과부하(HTTP {response.status_code}). {RETRY_WAIT}초 후 재시도합니다...")
+                    _time.sleep(RETRY_WAIT)
+                    continue
+                elif response.status_code != 200:
+                    raise Exception(f"API Error Code {response.status_code}: {response_data}")
+                    
+                ai_insight = response_data['candidates'][0]['content']['parts'][0]['text']
+                print(f"  ✅ 퀀트 분석 보고서 초안이 완벽히 도출되었습니다! (모델: {model_name})")
+                break
+            except Exception as e:
+                if is_key_leaked:
+                    break
+                print(f"  ❌ [AI 통신 실패] {e}")
+                if attempt < MAX_RETRIES:
+                    print(f"  ⏳ {RETRY_WAIT}초 후 재시도합니다...")
+                    _time.sleep(RETRY_WAIT)
+        
+        if is_key_leaked:
+            break
+        if not ai_insight:
+            print(f"  ⚠️ {model_name} 모델 {MAX_RETRIES}회 시도 실패. 다음 대체 모델로 전환합니다...")
+    
+    # 모든 시도가 실패한 경우 에러 메시지 설정
+    if not ai_insight:
         if is_key_leaked:
             print("\n" + "="*80)
             print("🚨 [경고] 사용 중인 GEMINI_API_KEY가 공개 깃허브 등에 노출되어 구글에 의해 무효화되었습니다.")
@@ -255,7 +289,7 @@ def generate_and_send_report():
                 "3. **깃허브 클라우드 환경**: 깃허브 저장소(Gemini_KenyaRealEstate)의 `Settings -> Secrets and Variables -> Actions` 메뉴에서 `GEMINI_API_KEY` 값을 새 키로 업데이트해 줍니다."
             )
         else:
-            ai_insight = f"[AI 정밀 분석 장애] 일시적 장애가 발생했습니다.\n상세 에러 내용: {e}"
+            ai_insight = "[AI 정밀 분석 장애] 모든 Gemini AI 모델에서 일시적 장애가 발생했습니다.\n서버 과부하가 해소되면 다음 주간 보고서부터 정상 분석이 자동 복구됩니다."
 
     # 5.5 Word 파일 생성 및 저장 (금주 결과물 폴더에 생성)
     current_date = datetime.now().strftime('%Y%m%d')
