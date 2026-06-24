@@ -185,7 +185,8 @@ def train_real_estate_model():
         df_sale_model = df_sale.dropna(subset=['Price_per_sqm', 'Size_sqm', 'Location']).copy()
         
         drop_cols = ['Price_KES', 'Price_per_sqm', 'Scraped_Date', 'Property_ID', 'Listing_Type', 'Date']
-        X = df_sale_model.drop(columns=[col for col in drop_cols if col in df_sale_model.columns])
+        cols_to_drop = [col for col in df_sale_model.columns if col in drop_cols or 'date' in col.lower()]
+        X = df_sale_model.drop(columns=cols_to_drop)
         y = df_sale_model['Price_per_sqm']
 
         if 'Location' in X.columns:
