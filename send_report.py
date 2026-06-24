@@ -219,10 +219,12 @@ def generate_and_send_report():
     
     # 시도할 모델 목록: 1순위 → 대체 모델 순서
     models_to_try = [target_model]
-    fallback_models = ["models/gemini-2.5-flash", "models/gemini-1.5-pro", "models/gemini-1.5-pro-latest", "models/gemini-1.5-flash"]
+    fallback_models = ["models/gemini-2.5-flash", "models/gemini-1.5-pro", "models/gemini-1.5-pro-latest", "models/gemini-1.5-flash", "models/gemini-1.5-flash-8b"]
     for fm in fallback_models:
-        if fm != target_model and fm in available_models:
-            models_to_try.append(fm)
+        if fm != target_model:
+            if not available_models or fm in available_models:
+                if fm not in models_to_try:
+                    models_to_try.append(fm)
     
     MAX_RETRIES = 3
     RETRY_WAIT = 30  # seconds
