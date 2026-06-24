@@ -115,14 +115,17 @@ def upload_file_to_gdrive(local_file_path, gdrive_folder_id, headers):
 def main():
     base_path = os.path.dirname(os.path.abspath(__file__))
     
-    # 1. Look for token.json in base path or repository root
+    # 1. Look for token.json in base path, parent path, or repository root
     token_file = os.path.join(base_path, "token.json")
+    if not os.path.exists(token_file):
+        # Check parent directory
+        token_file = os.path.join(os.path.dirname(base_path), "token.json")
     if not os.path.exists(token_file):
         # Fallback to current working directory
         token_file = "token.json"
         
     if not os.path.exists(token_file):
-        print(f"❌ Error: token.json not found at {os.path.abspath(token_file)}")
+        print(f"❌ Error: token.json not found")
         sys.exit(1)
         
     with open(token_file, "r", encoding="utf-8") as f:
