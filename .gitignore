@@ -1,0 +1,18 @@
+.env
+__pycache__/
+*.pyc
+temp_git_repo*
+.idea/
+.vscode/
+*.log
+*.docx
+*.png
+*.csv
+*.xlsx
+*.json
+*.txt
+raw_data/
+분석 결과/
+push_updated.py
+download_latest_results.py
+set_gdrive_secret.py
