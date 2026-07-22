@@ -1,4 +1,4 @@
-import sys
+﻿import sys
 try: sys.stdout.reconfigure(encoding='utf-8')
 except: pass
 
@@ -190,14 +190,14 @@ def generate_and_send_report():
     
     # 4. 내 API 키로 사용 가능한 모델 자동 탐색
     print("🔍 사용 가능한 AI 모델을 검색 중입니다...")
-    target_model = "models/gemini-2.5-flash"
+    target_model = "models/gemini-flash-latest"
     available_models = []
     try:
         models_url = f"https://generativelanguage.googleapis.com/v1beta/models?key={GENAI_API_KEY}"
         model_res = requests.get(models_url, timeout=10).json()
         available_models = [m['name'] for m in model_res.get('models', []) if 'generateContent' in m.get('supportedGenerationMethods', [])]
         
-        preferred = ["models/gemini-2.5-flash", "models/gemini-1.5-pro", "models/gemini-1.5-pro-latest"]
+        preferred = ["models/gemini-flash-latest", "models/gemini-flash-latest", "models/gemini-flash-latest-latest"]
         for pm in preferred:
             if pm in available_models:
                 target_model = pm
